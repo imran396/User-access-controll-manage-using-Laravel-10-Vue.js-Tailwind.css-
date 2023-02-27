@@ -11,7 +11,8 @@ class UserController extends Controller
     public function list(): Response
     {
         return Inertia::render('User', [
-            'data' =>  User::paginate(15)
+            'data' =>  User::paginate(1)
         ]);
     }
+
 }

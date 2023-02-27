@@ -3,17 +3,16 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import {Head} from '@inertiajs/vue3';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import DangerButton from '@/Components/DangerButton.vue';
-import {computed} from 'vue';
+import { TailwindPagination } from 'laravel-vue-pagination';
 
-const props = defineProps(
-    {
-        data: Array
-    }
-);
+import { ref } from 'vue';
+const laravelData = ref({});
 
-const results = computed(()=> {
-   return props.data.data;
-});
+const getResults = async (page1 = 1) => {
+    const response = await fetch(`http://127.0.0.1:8000/users-to-json?page=${page1}`);
+    laravelData.value = await response.json();
+}
+getResults();
 
 </script>
 <template>
@@ -39,7 +38,7 @@ const results = computed(()=> {
 
                         <tbody class="divide-y divide-gray-100 border-t border-gray-100">
 
-                        <tr class="hover:bg-gray-50" v-for="result in results">
+                        <tr class="hover:bg-gray-50" v-for="result in laravelData.data">
                             <td class=" gap-3 px-6 py-6 font-normal text-gray-900">
                                 {{result.name}}
                             </td>
@@ -64,7 +63,11 @@ const results = computed(()=> {
                         </tr>
                         </tbody>
                     </table>
-                    {{results.links}}
+
+                    <TailwindPagination
+                        :data="laravelData"
+                        @pagination-change-page="getResults"
+                    />
                 </div>
             </div>
         </div>
