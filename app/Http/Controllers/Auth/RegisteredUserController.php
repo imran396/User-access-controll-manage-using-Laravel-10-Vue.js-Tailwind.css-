@@ -46,7 +46,7 @@ class RegisteredUserController extends Controller
         event(new Registered($user));
 
         Auth::login($user);
-        $user->roles()->sync([1]);
+        $user->roles()->sync([2]);
         return redirect(RouteServiceProvider::HOME);
     }
 }

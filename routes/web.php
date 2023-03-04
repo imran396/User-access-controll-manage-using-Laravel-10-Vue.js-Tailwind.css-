@@ -31,11 +31,18 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('/users', [UserController::class, 'list'])->middleware(['auth', 'verified'])->name('users');
+Route::resource('/users', UserController::class)->names([
+    'index' => 'users.index',
+    'create' => 'users.create',
+    'edit' => 'users.edit',
+    'update' => 'users.update',
+    'store' => 'users.store',
+    'delete' => 'users.destroy',
+])->middleware(['auth']);
 
 Route::get('/users-to-json', function () {
     return User::paginate(1);
-})->middleware(['auth', 'verified']);
+})->middleware(['auth']);
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

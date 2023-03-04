@@ -50,4 +50,11 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Role::class)->withTimestamps();
     }
+
+    public function roleIds(): array
+    {
+        return array_map(function ($role) {
+            return $role['id'];
+        }, $this->roles->toArray());
+    }
 }
