@@ -3,10 +3,12 @@ namespace App\Http\Controllers;
 
 use App\Constants\Roles as RolesConstant;
 use App\Http\Requests\UserRequest;
+use App\Jobs\SendRegisterUserEmail;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -15,7 +17,6 @@ class UserController extends Controller
     public function index(): Response
     {
         $users = User::paginate(1);
-        info($users);
         return Inertia::render('User/Index', [
             'users' =>  $users,
         ]);
@@ -51,7 +52,8 @@ class UserController extends Controller
         $user = User::create($request->only(['name', 'email', 'password']));
         $role_ids = array_values($request->get('roles', []));
         $user->roles()->sync($role_ids);
-        event(new Registered($user));
+
+        SendRegisterUserEmail::dispatch($user);
         return redirect('/users');
     }
 
